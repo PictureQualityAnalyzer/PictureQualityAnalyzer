@@ -24,6 +24,9 @@ http://rodrigoberriel.com/2014/10/installing-opencv-3-0-0-on-ubuntu-14-04/
 
 - Hacer filtro paso bajo (Gaussiano) y paso alto (Laplace) para ver si una imagen tiene info de alta frecuencia o no, lo cual implicaría bordes mejor definidos.
 
+- Detectar un color muy saturado y homogéneo en alguna región. Thresholding por saturacion de color.
+
+
 
 
 - Detectar caras y encuadrarlas. Si el cuatrado se desborda de la imagen, restar puntos.
@@ -36,4 +39,11 @@ http://rodrigoberriel.com/2014/10/installing-opencv-3-0-0-on-ubuntu-14-04/
 
 - Detectar bordes horiz, verticales y diagonales. Si los puntos que pertenecen a los diagonales son muchos respecto a los horiz y vert, la foto pierde puntos.
 
+- Detectar curvas: Hough Transform
 
+
+
+
+- Medir histogramas de cada color, rango dinámico de cada uno
+- Hay muchos píxeles saturados? Malo!
+- Contar caras
