@@ -31,12 +31,12 @@ void countBlackPixels(Mat img) {
  */
 void detectBorder(Mat img) {
   Mat img_filtered;
-  cvtColor( img, img, COLOR_BGR2GRAY );
+  cvtColor(img, img, COLOR_BGR2GRAY);
 
   /// Reduce noise with a kernel 3x3
-  blur( img, img, Size(3,3) );
+  blur(img, img, Size(3,3));
   /// Canny detector
-  Canny( img, img, CANNY_THRES, 3 * CANNY_THRES, 3 );
+  Canny(img, img, CANNY_THRES, 3 * CANNY_THRES, 3);
 
   countBlackPixels(img);
 
@@ -161,39 +161,35 @@ void compare(Mat src_base, Mat src_test1) {
 
   Mat hsv_base;
   Mat hsv_test1;
-  Mat hsv_half_down;
 
   /// Convert to HSV
   cvtColor( src_base, hsv_base, COLOR_BGR2HSV );
   cvtColor( src_test1, hsv_test1, COLOR_BGR2HSV );
 
-  hsv_half_down = hsv_base( Range( hsv_base.rows/2, hsv_base.rows - 1 ), Range( 0, hsv_base.cols - 1 ) );
-
   /// Using 50 bins for hue and 60 for saturation
-  int h_bins = 50;
-  int s_bins = 60;
-  int histSize[] = { h_bins, s_bins };
+  int h_bins = 180;
+  int s_bins = 256;
+  int v_bins = 256;
+  int histSize[] = { h_bins, s_bins, v_bins };
 
   // hue varies from 0 to 179, saturation from 0 to 255
   float h_ranges[] = { 0, 180 };
   float s_ranges[] = { 0, 256 };
+  float v_ranges[] = { 0, 256 };
 
-  const float* ranges[] = { h_ranges, s_ranges };
+
+  const float* ranges[] = { h_ranges, s_ranges, v_ranges };
 
   // Use the o-th and 1-st channels
-  int channels[] = { 0, 1 };
+  int channels[] = { 0, 1, 2 };
 
   /// Histograms
   Mat hist_base;
-  Mat hist_half_down;
   Mat hist_test1;
 
   /// Calculate the histograms for the HSV images
   calcHist( &hsv_base, 1, channels, Mat(), hist_base, 2, histSize, ranges, true, false );
   normalize( hist_base, hist_base, 0, 1, NORM_MINMAX, -1, Mat() );
-
-  calcHist( &hsv_half_down, 1, channels, Mat(), hist_half_down, 2, histSize, ranges, true, false );
-  normalize( hist_half_down, hist_half_down, 0, 1, NORM_MINMAX, -1, Mat() );
 
   calcHist( &hsv_test1, 1, channels, Mat(), hist_test1, 2, histSize, ranges, true, false );
   normalize( hist_test1, hist_test1, 0, 1, NORM_MINMAX, -1, Mat() );
@@ -203,10 +199,9 @@ void compare(Mat src_base, Mat src_test1) {
 
     int compare_method = i;
     double base_base = compareHist( hist_base, hist_base, compare_method );
-    double base_half = compareHist( hist_base, hist_half_down, compare_method );
     double base_test1 = compareHist( hist_base, hist_test1, compare_method );
 
-    printf( "Method [%d] Base, Base-Half, Base-Test : %f, %f, %f \n", i, base_base, base_half , base_test1 );
+    printf( "Method [%d] Base, Base-Test : %f, %f \n", i, base_base, base_test1 );
   }
 
 }
@@ -311,13 +306,18 @@ void detectFaces(Mat img) {
 
 }
 
+
+
 int main(int argc, char** argv) {
+
+  cout << "Using OpenCV version " << CV_VERSION << endl << endl;
 
   Mat img_color, img_grayscale;
   if(argc > 1) {
     img_color = imread(argv[1], CV_LOAD_IMAGE_COLOR);
   } else {
     cout << "Please enter the image you want to process." << endl;
+    cout << "Usage: " << argv[0] << " [<image>]" << endl;
     return 0;
   }
 
